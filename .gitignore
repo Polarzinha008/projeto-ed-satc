@@ -1,0 +1,22 @@
+# --- DADOS E MASSA OPERACIONAL ---
+# Bloqueia completamente os dados gerados pelo Faker para não poluir o GitHub
+dados_origem/
+*.csv
+
+# --- INFRAESTRUTURA LOCAL ---
+# Ignora os dados de persistência do MinIO e do banco de metadados do Airflow
+minio_data/
+postgres_data/
+
+# --- AMBIENTE VIRTUAL PYTHON ---
+# Ignora pastas de ambiente virtual caso você utilize venv / poetry
+.venv/
+venv/
+ENV/
+__pycache__/
+*.pyc
+
+# --- LOGS E CONFIGURAÇÕES DE INTERFACES ---
+# Logs gerados pelo Airflow localmente não devem ir para o repositório principal
+airflow/logs/
+.env
