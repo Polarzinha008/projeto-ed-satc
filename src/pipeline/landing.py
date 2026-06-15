@@ -35,6 +35,7 @@ def get_client():
         endpoint_url=MINIO_ENDPOINT,
         aws_access_key_id=MINIO_ACCESS_KEY,
         aws_secret_access_key=MINIO_SECRET_KEY,
+        use_ssl=False,  
         config=Config(signature_version="s3v4"),
     )
 
