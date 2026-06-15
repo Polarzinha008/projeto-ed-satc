@@ -10,8 +10,8 @@ from datetime import datetime
 
 # Configurações do MinIO
 MINIO_ENDPOINT = "http://minio:9000"
-MINIO_ACCESS_KEY = "admin"
-MINIO_SECRET_KEY = "admin123"
+MINIO_ACCESS_KEY = os.getenv("MINIO_USER", "admin")
+MINIO_SECRET_KEY = os.getenv("MINIO_PASSWORD", "admin123")
 BUCKET = "datalake"
 
 # Pasta com os CSVs gerados pelo gerar_dados_v2.py

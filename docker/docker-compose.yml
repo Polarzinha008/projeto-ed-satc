@@ -1,5 +1,4 @@
 services:
-
   minio:
     image: minio/minio:latest
     container_name: minio
@@ -7,8 +6,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: admin123
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
@@ -17,15 +16,15 @@ services:
     image: postgres:15
     container_name: postgres
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: airflow
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "airflow"]
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
       interval: 5s
       retries: 5
 
@@ -37,14 +36,14 @@ services:
         condition: service_healthy
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     entrypoint: /bin/bash
     command:
       - -c
       - |
         airflow db migrate
-        airflow users create --username admin --password admin --firstname Admin --lastname Admin --role Admin --email admin@example.com
+        airflow users create --username admin --password ${DB_PASSWORD} --firstname Admin --lastname Admin --role Admin --email admin@example.com
 
   airflow-webserver:
     image: apache/airflow:2.9.1-python3.11
@@ -54,7 +53,7 @@ services:
         condition: service_completed_successfully
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     volumes:
       - ../src/dags:/opt/airflow/dags
@@ -73,7 +72,7 @@ services:
         condition: service_completed_successfully
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     volumes:
       - ../src/dags:/opt/airflow/dags
