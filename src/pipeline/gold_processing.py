@@ -37,15 +37,12 @@ def executar():
     produtos = spark.read.format("delta").load(f"s3a://{BUCKET}/silver/ecommerce/produtos/")
     categorias = spark.read.format("delta").load(f"s3a://{BUCKET}/silver/ecommerce/categorias/")
 
-    # junta itens + produtos + categorias
-    df = itens.join(produtos, itens.id_produto == produtos.id_produto)
-    df = df.join(categorias, produtos.id_categoria == categorias.id_categoria)
+    # agora junto pelo NOME da coluna (coalesce a chave e evita ambiguidade)
+    df = itens.join(produtos, "id_produto").join(categorias, "id_categoria")
 
-    # receita de cada item
     df = df.withColumn("receita", col("preco_unitario"))
 
-    # faturamento por categoria
-    resultado = df.groupBy("id_categoria", "nome_categoria").agg(sum("receita"))
+    resultado = df.groupBy("nome_categoria").agg(sum("receita"))
 
     resultado.write.format("delta").mode("overwrite").save(f"s3a://{BUCKET}/gold/ecommerce/faturamento_por_categoria/")
 
