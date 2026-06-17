@@ -36,15 +36,23 @@ def executar():
     itens = spark.read.format("delta").load(f"s3a://{BUCKET}/silver/ecommerce/itens_pedido/")
     produtos = spark.read.format("delta").load(f"s3a://{BUCKET}/silver/ecommerce/produtos/")
     categorias = spark.read.format("delta").load(f"s3a://{BUCKET}/silver/ecommerce/categorias/")
+    pedidos = spark.read.format("delta").load(f"s3a://{BUCKET}/silver/ecommerce/pedidos/")
 
-    # agora junto pelo NOME da coluna (coalesce a chave e evita ambiguidade)
-    df = itens.join(produtos, "id_produto").join(categorias, "id_categoria")
+    # junto pedidos p/ descartar cancelados e calculo a receita correta (qtd * preço)
+    base = (
+        itens.join(pedidos, "id_pedido")
+            .filter(col("status_pedido") != "Cancelado")
+            .join(produtos, "id_produto")
+            .join(categorias, "id_categoria")
+            .withColumn("receita", col("quantidade") * col("preco_unitario"))
+    )
 
-    df = df.withColumn("receita", col("preco_unitario"))
+    # mart 1: faturamento por categoria (com nome de coluna decente)
+    fat_categoria = base.groupBy("nome_categoria").agg(sum("receita").alias("receita_total"))
+    fat_categoria.write.format("delta").mode("overwrite").save(f"s3a://{BUCKET}/gold/ecommerce/faturamento_por_categoria/")
 
-    resultado = df.groupBy("nome_categoria").agg(sum("receita"))
-
-    resultado.write.format("delta").mode("overwrite").save(f"s3a://{BUCKET}/gold/ecommerce/faturamento_por_categoria/")
+    # mart 2: tabela fato com as vendas detalhadas
+    base.write.format("delta").mode("overwrite").save(f"s3a://{BUCKET}/gold/ecommerce/fato_vendas/")
 
     print("Camada Gold concluída!")
     spark.stop()
