@@ -1,0 +1,19 @@
+site_name: Projeto Final - Engenharia de Dados SATC
+site_description: Documentação do projeto final de Engenharia de Dados com pipeline em camadas.
+site_author: Grupo SATC
+repo_url: https://github.com/Polarzinha008/projeto-ed-satc
+repo_name: Polarzinha008/projeto-ed-satc
+
+theme:
+  name: readthedocs
+  highlightjs: true
+
+nav:
+  - Home: index.md
+  - Arquitetura: arquitetura.md
+  - Modelo de Dados: modelo_dados.md
+  - Como Executar: execucao.md
+  - Dashboard Analítico: dashboard.md
+
+markdown_extensions:
+  - admonition
