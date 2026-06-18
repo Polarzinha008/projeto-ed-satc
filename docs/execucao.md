@@ -13,9 +13,9 @@ cp .env.example .env
 **Valores padrão usados no projeto:**
 ```env
 MINIO_USER=admin
-MINIO_PASSWORD=admin123
+MINIO_PASSWORD=***
 DB_USER=airflow
-DB_PASSWORD=airflow
+DB_PASSWORD=***
 ```
 
 ## 2. Gerar os dados de origem
