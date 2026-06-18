@@ -81,6 +81,21 @@ services:
     command: scheduler
     restart: always
 
+  dashboard:
+    build: ../dashboard
+    container_name: dashboard-ecommerce
+    depends_on:
+      - minio
+    environment:
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_USER: ${MINIO_USER}
+      MINIO_PASSWORD: ${MINIO_PASSWORD}
+      DATALAKE_BUCKET: datalake
+      DASHBOARD_PREFIX: published/dashboard
+    ports:
+      - "8501:8501"
+    restart: always
+
 volumes:
   minio_data:
   postgres_data:

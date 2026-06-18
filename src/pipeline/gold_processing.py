@@ -38,11 +38,16 @@ def ler_silver(spark, tabela: str):
     return spark.read.format("delta").load(f"s3a://{BUCKET}/silver/ecommerce/{tabela}/")
 
 def salvar_gold(df, nome_mart: str):
-    """Grava uma tabela na camada Gold em Delta, adicionando a data de processamento."""
+    """Grava uma tabela Gold em Delta e publica uma copia Parquet para o dashboard."""
     df = df.withColumn("dt_processamento_gold", F.current_timestamp())
-    destino = f"s3a://{BUCKET}/gold/ecommerce/{nome_mart}/"
-    df.write.format("delta").mode("overwrite").save(destino)
+    destino_gold = f"s3a://{BUCKET}/gold/ecommerce/{nome_mart}/"
+    destino_dashboard = f"s3a://{BUCKET}/published/dashboard/{nome_mart}/"
+
+    df.write.format("delta").mode("overwrite").save(destino_gold)
+    df.write.format("parquet").mode("overwrite").save(destino_dashboard)
+
     print(f"Gold gravada: {nome_mart} ({df.count()} linhas)")
+    print(f"Publicacao dashboard gravada: {nome_mart} -> {destino_dashboard}")
 
 def construir_fato_vendas(spark):
     """Monta a tabela fato de vendas (grão = item de pedido), apenas com pedidos válidos.
