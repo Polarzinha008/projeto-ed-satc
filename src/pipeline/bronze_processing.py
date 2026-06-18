@@ -43,7 +43,7 @@ def processar_tabela(spark, tabela: str):
     origem = f"s3a://{BUCKET}/landing/ecommerce/{tabela}/{DATA_PARTICAO}/{tabela}.csv"
     destino = f"s3a://{BUCKET}/bronze/ecommerce/{tabela}/"
     
-    print(f"⏳ Processando tabela: {tabela}...")
+    print(f"Processando tabela: {tabela}...")
     
     # Lê o CSV
     df = (
@@ -66,10 +66,10 @@ def processar_tabela(spark, tabela: str):
         .mode("overwrite")
         .save(destino)
     )
-    print(f"✅ Bronze gravada: {tabela} ({df.count()} linhas)")
+    print(f"Bronze gravada: {tabela} ({df.count()} linhas)")
 
 def executar():
-    print("🚀 Iniciando processamento da Camada Bronze...\n")
+    print("Iniciando processamento da Camada Bronze...\n")
     spark = get_spark()
     spark.sparkContext.setLogLevel("ERROR")
     
@@ -77,7 +77,7 @@ def executar():
         processar_tabela(spark, tabela)
         
     spark.stop()
-    print("\n✅ Camada Bronze concluída!")
+    print("\n Camada Bronze concluída!")
 
 if __name__ == "__main__":
     executar()

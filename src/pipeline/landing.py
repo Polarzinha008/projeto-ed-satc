@@ -45,9 +45,9 @@ def criar_bucket_se_nao_existir(client):
     buckets = [b["Name"] for b in client.list_buckets().get("Buckets", [])]
     if BUCKET not in buckets:
         client.create_bucket(Bucket=BUCKET)
-        print(f"✅ Bucket '{BUCKET}' criado.")
+        print(f"Bucket '{BUCKET}' criado.")
     else:
-        print(f"ℹ️  Bucket '{BUCKET}' já existe.")
+        print(f"Bucket '{BUCKET}' já existe.")
 
 
 def upload_tabela(client, tabela: str):
@@ -56,23 +56,23 @@ def upload_tabela(client, tabela: str):
     destino = f"landing/ecommerce/{tabela}/{DATA_PARTICAO}/{tabela}.csv"
 
     if not os.path.exists(arquivo_local):
-        print(f"⚠️  Arquivo não encontrado: {arquivo_local}")
+        print(f"Arquivo não encontrado: {arquivo_local}")
         return
 
     client.upload_file(arquivo_local, BUCKET, destino)
-    print(f"📤 {tabela}.csv → s3://{BUCKET}/{destino}")
+    print(f"{tabela}.csv → s3://{BUCKET}/{destino}")
 
 
 def executar():
     """Executa o pipeline da Landing Zone."""
-    print("🚀 Iniciando ingestão para Landing Zone...\n")
+    print("Iniciando ingestão para Landing Zone...\n")
     client = get_client()
     criar_bucket_se_nao_existir(client)
 
     for tabela in TABELAS:
         upload_tabela(client, tabela)
 
-    print(f"\n✅ Landing Zone concluída! {len(TABELAS)} tabelas processadas.")
+    print(f"\n Landing Zone concluída! {len(TABELAS)} tabelas processadas.")
 
 
 if __name__ == "__main__":
