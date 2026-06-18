@@ -1,0 +1,5 @@
+streamlit==1.36.0
+pandas==2.2.2
+pyarrow==16.1.0
+s3fs==2024.6.1
+altair==5.3.0
