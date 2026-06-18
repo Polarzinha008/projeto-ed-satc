@@ -65,7 +65,7 @@ def processar_tabela(spark, tabela: str):
     origem = f"s3a://{BUCKET}/bronze/ecommerce/{tabela}/"
     destino = f"s3a://{BUCKET}/silver/ecommerce/{tabela}/"
     
-    print(f"⏳ Processando tabela: {tabela} na camada Silver...")
+    print(f"Processando tabela: {tabela} na camada Silver...")
     
     # Lê os dados em formato Delta da Bronze
     df = spark.read.format("delta").load(origem)
@@ -80,10 +80,10 @@ def processar_tabela(spark, tabela: str):
         .mode("overwrite")
         .save(destino)
     )
-    print(f"✅ Silver gravada: {tabela} ({df.count()} linhas após limpeza)")
+    print(f"Silver gravada: {tabela} ({df.count()} linhas após limpeza)")
 
 def executar():
-    print("🚀 Iniciando processamento da Camada Silver...\n")
+    print("Iniciando processamento da Camada Silver...\n")
     spark = get_spark()
     spark.sparkContext.setLogLevel("ERROR")
     
@@ -91,7 +91,7 @@ def executar():
         processar_tabela(spark, tabela)
         
     spark.stop()
-    print("\n✅ Camada Silver concluída!")
+    print("\n Camada Silver concluída!")
 
 if __name__ == "__main__":
     executar()

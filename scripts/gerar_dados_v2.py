@@ -23,7 +23,7 @@ VOLUMES = {
 }
 
 total_geral = sum(VOLUMES.values())
-print(f"📊 Configurado para gerar {total_geral} registros no total das 10 tabelas.")
+print(f"Configurado para gerar {total_geral} registros no total das 10 tabelas.")
 
 DATA_INICIO = datetime(2023, 6, 1)
 DATA_FIM = datetime(2026, 6, 1)
@@ -33,21 +33,21 @@ def gerar_data_aleatoria(inicio, fim):
     dias_aleatorios = random.randint(0, delta.days)
     return (inicio + timedelta(days=dias_aleatorios)).strftime('%Y-%m-%d %H:%M:%S')
 
-print("⏳ Iniciando a geração da massa de dados...")
+print("Iniciando a geração da massa de dados...")
 
 # 1. CATEGORIAS (50)
 categorias = []
 for idx in range(1, VOLUMES["categorias"] + 1):
     categorias.append({"id_categoria": idx, "nome_categoria": f"Subcategoria {fake.word().capitalize()}-{idx}"})
 df_categorias = pd.DataFrame(categorias)
-print(f"✅ 1/10 - Categorias: {len(df_categorias)} linhas")
+print(f"1/10 - Categorias: {len(df_categorias)} linhas")
 
 # 2. CUPONS (150)
 cupons = []
 for idx in range(1, VOLUMES["cupons"] + 1):
     cupons.append({"id_cupom": idx, "codigo": f"PROMO{idx:03d}", "percentual_desconto": random.choice([5, 10, 15, 20])})
 df_cupons = pd.DataFrame(cupons)
-print(f"✅ 2/10 - Cupons: {len(df_cupons)} lines")
+print(f"2/10 - Cupons: {len(df_cupons)} lines")
 
 # 3. FORNECEDORES (800)
 fornecedores = []
@@ -163,4 +163,4 @@ df_itens_pedido.to_csv("dados_origem/itens_pedido.csv", index=False)
 df_pagamentos.to_csv("dados_origem/pagamentos.csv", index=False)
 df_avaliacoes.to_csv("dados_origem/avaliacoes.csv", index=False)
 
-print(f"\n🚀 Sucesso! {total_geral} registros criados e distribuídos nas 10 tabelas em '/dados_origem'.")
+print(f"\n Sucesso! {total_geral} registros criados e distribuídos nas 10 tabelas em '/dados_origem'.")
