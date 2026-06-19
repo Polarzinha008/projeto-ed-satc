@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Grupo SATC" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Dashboard Analítico - Projeto Final - Engenharia de Dados SATC</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Dashboard Anal\u00edtico";
+        var mkdocs_page_input_path = "dashboard.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Projeto Final - Engenharia de Dados SATC
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../arquitetura/">Arquitetura</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../modelo_dados/">Modelo de Dados</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../execucao/">Como Executar</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Dashboard Analítico</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#acesso">Acesso</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#kpis-principais">KPIs Principais</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#metricas-e-graficos">Métricas e Gráficos</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#graficos-obrigatorios">Gráficos Obrigatórios</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extras-incluidos">Extras Incluídos</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#resumo-dos-marts-gold-utilizados">Resumo dos Marts Gold Utilizados</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Projeto Final - Engenharia de Dados SATC</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Dashboard Analítico</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Polarzinha008/projeto-ed-satc/edit/master/docs/dashboard.md">Edit on Polarzinha008/projeto-ed-satc</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="dashboard-analitico">Dashboard Analítico</h1>
+<p>O projeto conta com um dashboard interativo construído com <strong>Streamlit</strong>, seguindo o conceito de <em>One Page View</em>.</p>
+<h2 id="acesso">Acesso</h2>
+<p>Para acessar o painel, certifique-se de ter executado todas as DAGs (conforme instruído na aba <a href="../execucao/">Como Executar</a>) e acesse:</p>
+<p><a href="http://localhost:8501">http://localhost:8501</a></p>
+<blockquote>
+<p><strong>Aviso:</strong> Se os dados ainda não tiverem sido processados até a camada Gold, o dashboard exibirá uma mensagem orientando a execução das DAGs.</p>
+</blockquote>
+<h2 id="kpis-principais">KPIs Principais</h2>
+<p>O painel apresenta 4 KPIs fundamentais do negócio de e-commerce logo na visão inicial:</p>
+<ol>
+<li><strong>Receita total</strong></li>
+<li><strong>Quantidade de pedidos</strong></li>
+<li><strong>Ticket médio</strong></li>
+<li><strong>Quantidade de itens vendidos</strong></li>
+</ol>
+<p><strong>Origem dos dados (KPIs):</strong>
+- Arquivo consumido: <code>published/dashboard/fato_vendas</code>
+- Derivado da tabela Delta: <code>gold/ecommerce/fato_vendas</code></p>
+<h2 id="metricas-e-graficos">Métricas e Gráficos</h2>
+<h3 id="graficos-obrigatorios">Gráficos Obrigatórios</h3>
+<ul>
+<li><strong>Evolução do faturamento mensal</strong></li>
+<li>Consome: <code>published/dashboard/faturamento_mensal</code></li>
+<li>Derivado de: <code>gold/ecommerce/faturamento_mensal</code></li>
+<li><strong>Faturamento por categoria</strong></li>
+<li>Consome: <code>published/dashboard/faturamento_por_categoria</code></li>
+<li>Derivado de: <code>gold/ecommerce/faturamento_por_categoria</code></li>
+</ul>
+<h3 id="extras-incluidos">Extras Incluídos</h3>
+<ul>
+<li><strong>Ranking de Top Produtos (por receita)</strong></li>
+<li>Consome: <code>published/dashboard/top_produtos</code></li>
+<li><strong>Tabela Resumida de Vendas (por mês e categoria)</strong></li>
+<li>Consome: <code>published/dashboard/fato_vendas</code></li>
+</ul>
+<h2 id="resumo-dos-marts-gold-utilizados">Resumo dos Marts Gold Utilizados</h2>
+<p>A camada analítica Gold gerou os seguintes modelos que alimentam o visual do dashboard:
+- <code>fato_vendas</code>
+- <code>faturamento_mensal</code>
+- <code>faturamento_por_categoria</code>
+- <code>top_produtos</code></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../execucao/" class="btn btn-neutral float-left" title="Como Executar"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Polarzinha008/projeto-ed-satc" class="fa fa-code-fork" style="color: #fcfcfc"> Polarzinha008/projeto-ed-satc</a>
+        </span>
+    
+    
+      <span><a href="../execucao/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
