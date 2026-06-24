@@ -14,6 +14,7 @@ nav:
   - Modelo de Dados: modelo_dados.md
   - Como Executar: execucao.md
   - Dashboard Analítico: dashboard.md
+  - Apresentação (Slides): https://gamma.app/docs/Arquitetura-Medalhao-com-Apache-Airflow-PySpark-e-Delta-Lake-r545f5owwozmh7a
 
 markdown_extensions:
   - admonition
