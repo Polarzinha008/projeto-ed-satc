@@ -13,4 +13,4 @@ O objetivo deste projeto é demonstrar a construção de um pipeline de dados co
 - **Armazenamento**: MinIO (Object Storage) formatando em Delta Lake
 - **Visualização**: Streamlit
 
-Explore o menu superior para entender mais sobre a [Arquitetura](arquitetura.md), aprender [Como Executar](execucao.md) e visualizar as métricas do [Dashboard](dashboard.md).
+Explore o menu superior para entender mais sobre a [Arquitetura](arquitetura.md), aprender [Como Executar](execucao.md), visualizar as métricas do [Dashboard](dashboard.md) ou acessar a [Apresentação de Slides no Gamma](https://gamma.app/docs/Arquitetura-Medalhao-com-Apache-Airflow-PySpark-e-Delta-Lake-r545f5owwozmh7a).

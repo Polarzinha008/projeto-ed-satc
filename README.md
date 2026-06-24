@@ -3,6 +3,11 @@
 Projeto final de Engenharia de Dados com pipeline em camadas para dados de
 e-commerce e dashboard analitico em Streamlit.
 
+## Apresentação do Projeto
+
+Os slides e a explicação técnica detalhada da arquitetura deste projeto podem ser acessados em:
+👉 **[Apresentação no Gamma](https://gamma.app/docs/Arquitetura-Medalhao-com-Apache-Airflow-PySpark-e-Delta-Lake-r545f5owwozmh7a)**
+
 ## Stack
 
 - Python
