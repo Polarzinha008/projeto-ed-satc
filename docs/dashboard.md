@@ -11,7 +11,7 @@ Para acessar o painel, certifique-se de ter executado todas as DAGs (conforme in
 
 ## KPIs Principais
 
-O painel apresenta 4 KPIs fundamentais do negócio de e-commerce logo na visão inicial:
+O painel apresenta exatamente 4 KPIs fundamentais do negócio de e-commerce logo na visão inicial:
 
 1. **Receita total**
 2. **Quantidade de pedidos**

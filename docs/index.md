@@ -10,7 +10,7 @@ O objetivo deste projeto é demonstrar a construção de um pipeline de dados co
 - **Infraestrutura**: Docker Compose
 - **Orquestração**: Apache Airflow
 - **Processamento**: PySpark
-- **Armazenamento**: MinIO (Object Storage) formatando em Delta Lake
+- **Armazenamento**: MinIO (Object Storage) em formato Delta Lake
 - **Visualização**: Streamlit
 
 Explore o menu superior para entender mais sobre a [Arquitetura](arquitetura.md), aprender [Como Executar](execucao.md) e visualizar as métricas do [Dashboard](dashboard.md).

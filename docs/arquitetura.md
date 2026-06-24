@@ -9,7 +9,7 @@ Nossa stack foi desenhada para criar um Data Lakehouse moderno, com base na arqu
 - **PySpark**: Motor principal de transformação de dados.
 - **Delta Lake**: Formato de armazenamento que traz confiabilidade (ACID) ao Data Lake.
 - **MinIO**: Object Storage compatível com S3 (simulando armazenamento em nuvem).
-- **PostgreSQL**: Banco de dados relacional para metadados do Airflow e outras possíveis necessidades.
+- **PostgreSQL**: Banco de dados relacional para metadados do Airflow.
 - **Streamlit**: Framework Python para o dashboard analítico.
 - **Docker Compose**: Containerização de toda a infraestrutura para facilitar execução local.
 

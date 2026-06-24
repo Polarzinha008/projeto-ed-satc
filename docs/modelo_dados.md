@@ -4,7 +4,7 @@
 
 A fonte primária de dados simulada para este ambiente baseia-se em dados fictícios criados em nosso gerador Python para reproduzir o comportamento de um E-commerce.
 
-Os arquivos crus (`.csv`) são ingeridos e processados pelo **Apache Airflow e PySpark**, transformados em um modelo otimizado e salvos nos formatos colunares avançados (Delta Lake) na camada *Gold* da nossa arquitetura.
+Os arquivos crus (`.csv`) são ingeridos e processados pelo **Apache Airflow e PySpark**, transformados em um modelo otimizado e salvos nos formatos colunares avançados (Delta Lake) nas camadas *Bronze*, *Silver* e *Gold* da nossa arquitetura.
 
 ## Modelo Entidade-Relacionamento (ER)
 
