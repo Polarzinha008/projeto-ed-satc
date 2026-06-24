@@ -92,7 +92,7 @@
                 <h1 id="modelo-de-dados">Modelo de Dados</h1>
 <h2 id="fonte-de-dados">Fonte de Dados</h2>
 <p>A fonte primária de dados simulada para este ambiente baseia-se em dados fictícios criados em nosso gerador Python para reproduzir o comportamento de um E-commerce.</p>
-<p>Os arquivos crus (<code>.csv</code>) são ingeridos e processados pelo <strong>Apache Airflow e PySpark</strong>, transformados em um modelo otimizado e salvos nos formatos colunares avançados (Delta Lake) na camada <em>Gold</em> da nossa arquitetura.</p>
+<p>Os arquivos crus (<code>.csv</code>) são ingeridos e processados pelo <strong>Apache Airflow e PySpark</strong>, transformados em um modelo otimizado e salvos nos formatos colunares avançados (Delta Lake) nas camadas <em>Bronze</em>, <em>Silver</em> e <em>Gold</em> da nossa arquitetura.</p>
 <h2 id="modelo-entidade-relacionamento-er">Modelo Entidade-Relacionamento (ER)</h2>
 <p>Abaixo apresentamos o modelo Entidade-Relacionamento (ER) completo das 10 tabelas geradas na origem que alimentam nosso Data Lakehouse e posteriormente o modelo dimensional.</p>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
