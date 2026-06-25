@@ -91,17 +91,17 @@ Usuario do Airflow:
 - Login: `admin`
 - Senha: valor de `DB_PASSWORD` no `.env`
 
-### 4. Executar as DAGs
+### 4. Executar a DAG
 
-No Airflow, execute as DAGs nesta ordem:
+No Airflow, execute a DAG `dag_pipeline_ecommerce`. Ela orquestra todas as
+camadas em sequencia atraves de tasks encadeadas:
 
-1. `dag_01_landing`
-2. `dag_02_bronze`
-3. `dag_03_silver`
-4. `dag_04_gold`
+```text
+ingestao_landing -> processamento_bronze -> processamento_silver -> processamento_gold
+```
 
-A DAG `dag_04_gold` gera os marts Delta da camada Gold e tambem publica copias
-em Parquet para consumo do dashboard.
+A task `processamento_gold` gera os marts Delta da camada Gold e tambem publica
+cópias em Parquet para consumo do dashboard.
 
 ## Dashboard
 
@@ -120,7 +120,7 @@ O dashboard One Page View apresenta exatamente 4 KPIs principais:
 
 1. Receita total
 2. Quantidade de pedidos
-3. Ticket medio
+3. Ticket médio
 4. Quantidade de itens vendidos
 
 Fonte dos KPIs:
@@ -128,7 +128,7 @@ Fonte dos KPIs:
 - `published/dashboard/fato_vendas`
 - Derivado de `gold/ecommerce/fato_vendas`
 
-## Metricas e graficos
+## Métricas e gráficos
 
 Graficos obrigatorios:
 
