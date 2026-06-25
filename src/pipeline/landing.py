@@ -1,10 +1,13 @@
 """
-Landing Zone – lê CSVs locais e envia para o MinIO.
-Referência: Issue #3 - Ingestão para Landing Zone
+Landing Zone – lê as tabelas do banco de origem (Postgres) e envia para o MinIO.
+Origem SQL grava o formato bruto em CSV. Referência: Issue #3
 """
 
-import boto3
 import os
+import tempfile
+
+import boto3
+import psycopg2
 from botocore.client import Config
 from datetime import datetime
 
@@ -14,8 +17,12 @@ MINIO_ACCESS_KEY = os.getenv("MINIO_USER", "admin")
 MINIO_SECRET_KEY = os.getenv("MINIO_PASSWORD", "admin123")
 BUCKET = "datalake"
 
-# Pasta com os CSVs gerados pelo gerar_dados_v2.py
-DATA_ORIGEM = "/opt/airflow/dados_origem"
+# Banco de origem (Postgres do docker-compose)
+PG_HOST = os.getenv("PG_ORIGEM_HOST", "postgres-origem")
+PG_PORT = os.getenv("PG_ORIGEM_PORT", "5432")
+PG_DB = os.getenv("PG_ORIGEM_DB", "ecommerce")
+PG_USER = os.getenv("DB_USER", "airflow")
+PG_PASSWORD = os.getenv("DB_PASSWORD", "airflow")
 
 # Partição diária
 DATA_PARTICAO = datetime.now().strftime("%Y-%m-%d")
@@ -35,32 +42,52 @@ def get_client():
         endpoint_url=MINIO_ENDPOINT,
         aws_access_key_id=MINIO_ACCESS_KEY,
         aws_secret_access_key=MINIO_SECRET_KEY,
-        use_ssl=False,  
+        use_ssl=False,
         config=Config(signature_version="s3v4"),
     )
 
 
+def get_conexao():
+    """Abre conexão com o banco de origem."""
+    return psycopg2.connect(
+        host=PG_HOST,
+        port=PG_PORT,
+        dbname=PG_DB,
+        user=PG_USER,
+        password=PG_PASSWORD,
+    )
+
+
 def criar_bucket_se_nao_existir(client):
-    """Cria o bucket caso ainda não exista."""
-    buckets = [b["Name"] for b in client.list_buckets().get("Buckets", [])]
-    if BUCKET not in buckets:
+    """Cria o bucket caso ainda não exista (idempotente)."""
+    try:
         client.create_bucket(Bucket=BUCKET)
         print(f"Bucket '{BUCKET}' criado.")
-    else:
+    except (
+        client.exceptions.BucketAlreadyOwnedByYou,
+        client.exceptions.BucketAlreadyExists,
+    ):
         print(f"Bucket '{BUCKET}' já existe.")
 
 
-def upload_tabela(client, tabela: str):
-    """Faz upload de um CSV para a Landing Zone."""
-    arquivo_local = os.path.join(DATA_ORIGEM, f"{tabela}.csv")
+def upload_tabela(client, conn, tabela: str):
+    """Exporta uma tabela do Postgres para CSV e envia para a Landing Zone."""
     destino = f"landing/ecommerce/{tabela}/{DATA_PARTICAO}/{tabela}.csv"
 
-    if not os.path.exists(arquivo_local):
-        print(f"Arquivo não encontrado: {arquivo_local}")
-        return
+    with tempfile.NamedTemporaryFile(
+        mode="wb", suffix=".csv", delete=False
+    ) as tmp:
+        caminho_tmp = tmp.name
+        with conn.cursor() as cur:
+            cur.copy_expert(
+                f"COPY {tabela} TO STDOUT WITH CSV HEADER", tmp
+            )
 
-    client.upload_file(arquivo_local, BUCKET, destino)
-    print(f"{tabela}.csv → s3://{BUCKET}/{destino}")
+    try:
+        client.upload_file(caminho_tmp, BUCKET, destino)
+        print(f"{tabela} → s3://{BUCKET}/{destino}")
+    finally:
+        os.remove(caminho_tmp)
 
 
 def executar():
@@ -69,8 +96,12 @@ def executar():
     client = get_client()
     criar_bucket_se_nao_existir(client)
 
-    for tabela in TABELAS:
-        upload_tabela(client, tabela)
+    conn = get_conexao()
+    try:
+        for tabela in TABELAS:
+            upload_tabela(client, conn, tabela)
+    finally:
+        conn.close()
 
     print(f"\n Landing Zone concluída! {len(TABELAS)} tabelas processadas.")
 
