@@ -20,3 +20,7 @@ __pycache__/
 # Logs gerados pelo Airflow localmente não devem ir para o repositório principal
 airflow/logs/
 .env
+
+# --- DOCUMENTAÇÃO ---
+# Ignora a pasta de build gerada localmente pelo MkDocs
+site/
