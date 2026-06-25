@@ -11,8 +11,8 @@ from pyspark.sql.types import StringType
 
 # Configurações do MinIO
 MINIO_ENDPOINT = "http://minio:9000"
-ACCESS_KEY = os.getenv("MINIO_USER", "admin")
-SECRET_KEY = os.getenv("MINIO_PASSWORD", "admin123")
+MINIO_ACCESS_KEY = os.getenv("MINIO_USER", "admin")
+MINIO_SECRET_KEY = os.getenv("MINIO_PASSWORD", "admin123")
 BUCKET = "datalake"
 
 # Dicionário com as chaves primárias de cada tabela para remover duplicatas
@@ -38,8 +38,8 @@ def get_spark():
         .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
         .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
         .config("spark.hadoop.fs.s3a.endpoint", MINIO_ENDPOINT)
-        .config("spark.hadoop.fs.s3a.access.key", ACCESS_KEY)
-        .config("spark.hadoop.fs.s3a.secret.key", SECRET_KEY)
+        .config("spark.hadoop.fs.s3a.access.key", MINIO_ACCESS_KEY)
+        .config("spark.hadoop.fs.s3a.secret.key", MINIO_SECRET_KEY)
         .config("spark.hadoop.fs.s3a.path.style.access", "true")
         .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
@@ -93,7 +93,7 @@ def executar():
     spark = get_spark()
     spark.sparkContext.setLogLevel("ERROR")
 
-    for tabela in CHAVES_PRIMARIAS.keys():
+    for tabela in CHAVES_PRIMARIAS:
         processar_tabela(spark, tabela)
 
     spark.stop()
