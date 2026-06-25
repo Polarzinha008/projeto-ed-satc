@@ -70,7 +70,7 @@ def load_mart(nome_mart: str) -> pd.DataFrame:
     if not fs.exists(path):
         raise FileNotFoundError(path)
 
-    df = pd.read_parquet(f"s3://{path}", filesystem=fs)
+    df = pd.read_parquet(path, filesystem=fs)
     missing_columns = REQUIRED_COLUMNS[nome_mart] - set(df.columns)
     if missing_columns:
         missing = ", ".join(sorted(missing_columns))
@@ -161,14 +161,14 @@ def main() -> None:
     kpi_1, kpi_2, kpi_3, kpi_4 = st.columns(4)
     kpi_1.metric("Receita total", format_currency(receita_total))
     kpi_2.metric("Quantidade de pedidos", format_number(qtd_pedidos))
-    kpi_3.metric("Ticket medio", format_currency(ticket_medio))
+    kpi_3.metric("Ticket médio", format_currency(ticket_medio))
     kpi_4.metric("Quantidade de itens vendidos", format_number(qtd_itens))
 
     st.divider()
 
     chart_1, chart_2 = st.columns(2)
     with chart_1:
-        st.subheader("Evolucao do faturamento mensal")
+        st.subheader("Evolução do faturamento mensal")
         st.altair_chart(build_line_chart(faturamento_mensal), use_container_width=True)
 
     with chart_2:
@@ -178,31 +178,6 @@ def main() -> None:
         )
 
     st.divider()
-
-    rank_col, table_col = st.columns([1, 1])
-    with rank_col:
-        st.subheader("Top produtos por receita")
-        ranking = top_produtos.nlargest(10, "receita_total")[
-            ["nome_produto", "receita_total", "qtd_vendida", "nota_media"]
-        ].copy()
-        ranking["receita_total"] = ranking["receita_total"].map(format_currency)
-        st.dataframe(ranking, hide_index=True, use_container_width=True)
-
-    with table_col:
-        st.subheader("Resumo de vendas")
-        resumo = (
-            fato_vendas.groupby(["ano_mes", "nome_categoria"], as_index=False)
-            .agg(
-                receita_total=("receita", "sum"),
-                pedidos=("id_pedido", "nunique"),
-                itens_vendidos=("quantidade", "sum"),
-            )
-            .sort_values(["ano_mes", "receita_total"], ascending=[False, False])
-            .head(15)
-        )
-        resumo["receita_total"] = resumo["receita_total"].map(format_currency)
-        st.dataframe(resumo, hide_index=True, use_container_width=True)
-
 
 if __name__ == "__main__":
     main()
