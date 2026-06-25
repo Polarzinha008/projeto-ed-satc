@@ -2,10 +2,11 @@
 DAG – Processamento para a Camada Bronze
 Referência: Issue #5
 """
+import sys
+from datetime import datetime
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import datetime
-import sys
 
 # Adiciona o caminho do pipeline mapeado no Docker
 sys.path.insert(0, "/opt/airflow/pipeline")
@@ -18,7 +19,6 @@ with DAG(
     catchup=False,
     tags=["bronze", "ecommerce", "projeto-ed", "spark"],
 ) as dag:
-
     processamento_bronze = PythonOperator(
         task_id="processamento_bronze",
         python_callable=executar,

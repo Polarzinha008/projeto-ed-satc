@@ -2,10 +2,11 @@
 DAG – Processamento para a Camada Gold
 Referência: Issue #7
 """
+import sys
+from datetime import datetime
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import datetime
-import sys
 
 # Adiciona o caminho do pipeline mapeado no Docker
 sys.path.insert(0, "/opt/airflow/pipeline")
@@ -18,7 +19,6 @@ with DAG(
     catchup=False,
     tags=["gold", "ecommerce", "projeto-ed", "spark"],
 ) as dag:
-
     processamento_gold = PythonOperator(
         task_id="processamento_gold",
         python_callable=executar,
