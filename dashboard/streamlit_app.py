@@ -15,7 +15,7 @@ PUBLISHED_PREFIX = os.getenv("DASHBOARD_PREFIX", "published/dashboard")
 
 st.set_page_config(
     page_title="Dashboard E-commerce",
-    page_icon="chart_with_upwards_trend",
+    page_icon=":chart_with_upwards_trend:",
     layout="wide",
 )
 
