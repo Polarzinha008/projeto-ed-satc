@@ -52,6 +52,8 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#diagrama-da-arquitetura">Diagrama da Arquitetura</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#origem-banco-relacional">Origem (Banco Relacional)</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#landing-zone">Landing Zone</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#camada-bronze">Camada Bronze</a>
@@ -118,7 +120,7 @@
 <li><strong>PySpark</strong>: Motor principal de transformação de dados.</li>
 <li><strong>Delta Lake</strong>: Formato de armazenamento que traz confiabilidade (ACID) ao Data Lake.</li>
 <li><strong>MinIO</strong>: Object Storage compatível com S3 (simulando armazenamento em nuvem).</li>
-<li><strong>PostgreSQL</strong>: Banco de dados relacional para metadados do Airflow.</li>
+<li><strong>PostgreSQL</strong>: Banco relacional de origem dos dados (<code>ecommerce</code>) e metadados do Airflow.</li>
 <li><strong>Streamlit</strong>: Framework Python para o dashboard analítico.</li>
 <li><strong>Docker Compose</strong>: Containerização de toda a infraestrutura para facilitar execução local.</li>
 </ul>
@@ -137,16 +139,21 @@ graph LR
     style E fill:#fef08a,stroke:#a16207,stroke-width:2px
     style F fill:#bbf7d0,stroke:#15803d,stroke-width:2px
 
-    A[Origem: CSV] -->|Airflow DAG 01| B[(Landing Zone)]
+    A[(Origem: PostgreSQL)] -->|Airflow DAG 01| B[(Landing Zone)]
     B -->|PySpark / Delta<br>DAG 02| C[(Camada Bronze)]
     C -->|Limpeza<br>DAG 03| D[(Camada Silver)]
     D -->|Marts Analíticos<br>DAG 04| E[(Camada Gold)]
     E -->|Parquet| F[Dashboard Streamlit]
 </div>
 
+<h3 id="origem-banco-relacional">Origem (Banco Relacional)</h3>
+<ul>
+<li>Banco PostgreSQL (<code>ecommerce</code>) com 10 tabelas, populado pelo gerador Faker.</li>
+<li>Representa o sistema transacional de origem lido pela camada Landing.</li>
+</ul>
 <h3 id="landing-zone">Landing Zone</h3>
 <ul>
-<li>Dados brutos, no formato original.</li>
+<li>Dados brutos, no formato original (CSV extraído do banco SQL de origem).</li>
 <li>Arquivos CSV enviados para o bucket <code>s3://datalake/landing/ecommerce</code>.</li>
 </ul>
 <h3 id="camada-bronze">Camada Bronze</h3>
