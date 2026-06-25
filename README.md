@@ -3,6 +3,11 @@
 Projeto final de Engenharia de Dados com pipeline em camadas para dados de
 e-commerce e dashboard analitico em Streamlit.
 
+## Documentação Oficial
+
+A documentação completa do projeto, incluindo detalhes de arquitetura, execução e o modelo de dados gerado, está disponível no nosso site do MkDocs:
+👉 **[Acessar Documentação do Projeto](https://Polarzinha008.github.io/projeto-ed-satc/)**
+
 ## Apresentação do Projeto
 
 Os slides e a explicação técnica detalhada da arquitetura deste projeto podem ser acessados em:
