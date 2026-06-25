@@ -72,7 +72,7 @@ Entre na pasta `docker` e suba os servicos:
 
 ```bash
 cd docker
-docker compose --env-file ../.env up --build
+docker compose --env-file ../.env up --build -d
 ```
 
 Servicos principais:
