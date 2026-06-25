@@ -3,7 +3,9 @@ Gold – camada de negócio (tabela fato + marts analíticos) a partir da Silver
 Gera uma tabela fato de vendas e agregações.
 Referência: Issue #7
 """
+
 import os
+
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 
@@ -15,6 +17,7 @@ BUCKET = "datalake"
 
 # Status de pedido que NÃO conta como venda concretizada (faturamento)
 STATUS_INVALIDOS = ["Cancelado"]
+
 
 def get_spark():
     """Configura e retorna a sessão do Spark com suporte a Delta e S3/MinIO."""
@@ -33,9 +36,11 @@ def get_spark():
         .getOrCreate()
     )
 
+
 def ler_silver(spark, tabela: str):
     """Lê uma tabela já limpa da camada Silver (formato Delta)."""
     return spark.read.format("delta").load(f"s3a://{BUCKET}/silver/ecommerce/{tabela}/")
+
 
 def salvar_gold(df, nome_mart: str):
     """Grava uma tabela Gold em Delta e publica uma copia Parquet para o dashboard."""
@@ -48,6 +53,7 @@ def salvar_gold(df, nome_mart: str):
 
     print(f"Gold gravada: {nome_mart} ({df.count()} linhas)")
     print(f"Publicacao dashboard gravada: {nome_mart} -> {destino_dashboard}")
+
 
 def construir_fato_vendas(spark):
     """Monta a tabela fato de vendas (grão = item de pedido), apenas com pedidos válidos.
@@ -73,6 +79,7 @@ def construir_fato_vendas(spark):
         .withColumn("ano_mes", F.date_format(F.col("data_pedido").cast("timestamp"), "yyyy-MM"))
     )
     return fato
+
 
 def executar():
     print("Iniciando processamento da Camada Gold...")
@@ -131,6 +138,7 @@ def executar():
     fato.unpersist()
     spark.stop()
     print("Camada Gold concluída!")
+
 
 if __name__ == "__main__":
     executar()

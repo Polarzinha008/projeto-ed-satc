@@ -2,7 +2,9 @@
 Silver – limpeza e padronização dos dados da Bronze.
 Referência: Issue #6
 """
+
 import os
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import current_timestamp, trim
 from pyspark.sql.types import StringType
@@ -27,6 +29,7 @@ CHAVES_PRIMARIAS = {
     "avaliacoes": "id_avaliacao",
 }
 
+
 def get_spark():
     """Configura e retorna a sessão do Spark com suporte a Delta e S3/MinIO."""
     return (
@@ -44,35 +47,37 @@ def get_spark():
         .getOrCreate()
     )
 
+
 def limpar_dados(df, tabela):
     """Aplica as regras de limpeza da camada Silver."""
     # 1. Remove duplicatas com base na chave primária
     pk = CHAVES_PRIMARIAS[tabela]
     df_limpo = df.dropDuplicates([pk])
-    
+
     # 2. Remove espaços em branco extras do início e fim de colunas de texto (trim)
     for field in df_limpo.schema.fields:
         if isinstance(field.dataType, StringType):
             df_limpo = df_limpo.withColumn(field.name, trim(df_limpo[field.name]))
-            
+
     # 3. Adiciona a data de processamento na Silver
     df_limpo = df_limpo.withColumn("dt_processamento_silver", current_timestamp())
-    
+
     return df_limpo
+
 
 def processar_tabela(spark, tabela: str):
     """Lê da Bronze, limpa e grava na Silver em formato Delta."""
     origem = f"s3a://{BUCKET}/bronze/ecommerce/{tabela}/"
     destino = f"s3a://{BUCKET}/silver/ecommerce/{tabela}/"
-    
+
     print(f"Processando tabela: {tabela} na camada Silver...")
-    
+
     # Lê os dados em formato Delta da Bronze
     df = spark.read.format("delta").load(origem)
-    
+
     # Aplica a limpeza
     df = limpar_dados(df, tabela)
-    
+
     # Grava na Silver
     (
         df.write
@@ -82,16 +87,18 @@ def processar_tabela(spark, tabela: str):
     )
     print(f"Silver gravada: {tabela} ({df.count()} linhas após limpeza)")
 
+
 def executar():
     print("Iniciando processamento da Camada Silver...\n")
     spark = get_spark()
     spark.sparkContext.setLogLevel("ERROR")
-    
+
     for tabela in CHAVES_PRIMARIAS.keys():
         processar_tabela(spark, tabela)
-        
+
     spark.stop()
     print("\n Camada Silver concluída!")
+
 
 if __name__ == "__main__":
     executar()
