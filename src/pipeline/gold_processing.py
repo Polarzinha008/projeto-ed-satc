@@ -82,7 +82,7 @@ def construir_fato_vendas(spark):
 
 
 def executar():
-    print("Iniciando processamento da Camada Gold...")
+    print("Iniciando processamento da Camada Gold...\n")
     spark = get_spark()
     spark.sparkContext.setLogLevel("ERROR")
 
@@ -137,7 +137,7 @@ def executar():
 
     fato.unpersist()
     spark.stop()
-    print("Camada Gold concluída!")
+    print("\nCamada Gold concluída!")
 
 
 if __name__ == "__main__":

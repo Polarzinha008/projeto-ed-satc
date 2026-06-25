@@ -84,14 +84,16 @@ def show_missing_data_message(error: Exception) -> None:
     st.title("Dashboard E-commerce")
     st.info(
         "Os dados publicados da camada Gold ainda nao foram encontrados. "
-        "Gere os CSVs, suba o ambiente e execute as DAGs ate `dag_04_gold` no Airflow."
+        "Gere os CSVs, suba o ambiente e execute a DAG `dag_pipeline_ecommerce` no Airflow."
     )
     st.code(
         "python scripts/gerar_dados_v2.py\n"
         "cd docker\n"
         "docker compose --env-file ../.env up --build\n\n"
-        "No Airflow, execute em ordem:\n"
-        "dag_01_landing -> dag_02_bronze -> dag_03_silver -> dag_04_gold",
+        "No Airflow, execute a DAG:\n"
+        "dag_pipeline_ecommerce "
+        "(ingestao_landing -> processamento_bronze -> "
+        "processamento_silver -> processamento_gold)",
         language="bash",
     )
     st.caption(f"Detalhe tecnico: {error}")
