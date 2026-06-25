@@ -1,3 +1,5 @@
+"""Exibe os indicadores e graficos do e-commerce a partir da camada Gold."""
+
 import os
 
 import altair as alt
@@ -37,17 +39,20 @@ REQUIRED_COLUMNS = {
 
 
 def format_currency(value: float) -> str:
+    """Formata um valor numerico como moeda brasileira."""
     formatted = f"R$ {value:,.2f}"
     return formatted.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 def format_number(value: float) -> str:
+    """Formata um valor numerico com separador de milhares."""
     formatted = f"{value:,.0f}"
     return formatted.replace(",", ".")
 
 
 @st.cache_resource(show_spinner=False)
-def get_filesystem():
+def get_filesystem() -> s3fs.S3FileSystem:
+    """Cria o cliente de acesso ao armazenamento MinIO."""
     return s3fs.S3FileSystem(
         key=MINIO_USER,
         secret=MINIO_PASSWORD,
@@ -58,6 +63,7 @@ def get_filesystem():
 
 @st.cache_data(show_spinner=False)
 def load_mart(nome_mart: str) -> pd.DataFrame:
+    """Carrega e valida um mart publicado para o dashboard."""
     fs = get_filesystem()
     path = f"{BUCKET}/{PUBLISHED_PREFIX}/{nome_mart}"
 
@@ -73,7 +79,8 @@ def load_mart(nome_mart: str) -> pd.DataFrame:
     return df
 
 
-def show_missing_data_message(error: Exception):
+def show_missing_data_message(error: Exception) -> None:
+    """Exibe instrucoes quando os dados publicados nao estao disponiveis."""
     st.title("Dashboard E-commerce")
     st.info(
         "Os dados publicados da camada Gold ainda nao foram encontrados. "
@@ -90,7 +97,8 @@ def show_missing_data_message(error: Exception):
     st.caption(f"Detalhe tecnico: {error}")
 
 
-def build_line_chart(faturamento_mensal: pd.DataFrame):
+def build_line_chart(faturamento_mensal: pd.DataFrame) -> alt.Chart:
+    """Cria o grafico de linha do faturamento mensal."""
     chart_data = faturamento_mensal.sort_values("ano_mes").copy()
 
     return (
@@ -109,7 +117,8 @@ def build_line_chart(faturamento_mensal: pd.DataFrame):
     )
 
 
-def build_category_chart(faturamento_por_categoria: pd.DataFrame):
+def build_category_chart(faturamento_por_categoria: pd.DataFrame) -> alt.Chart:
+    """Cria o grafico de barras do faturamento por categoria."""
     chart_data = faturamento_por_categoria.nlargest(12, "receita_total").sort_values(
         "receita_total"
     )
@@ -130,7 +139,8 @@ def build_category_chart(faturamento_por_categoria: pd.DataFrame):
     )
 
 
-def main():
+def main() -> None:
+    """Renderiza o dashboard e seus indicadores."""
     try:
         fato_vendas = load_mart("fato_vendas")
         faturamento_mensal = load_mart("faturamento_mensal")
