@@ -9,7 +9,7 @@ Nossa stack foi desenhada para criar um Data Lakehouse moderno, com base na arqu
 - **PySpark**: Motor principal de transformação de dados.
 - **Delta Lake**: Formato de armazenamento que traz confiabilidade (ACID) ao Data Lake.
 - **MinIO**: Object Storage compatível com S3 (simulando armazenamento em nuvem).
-- **PostgreSQL**: Banco de dados relacional para metadados do Airflow.
+- **PostgreSQL**: Banco relacional de origem dos dados (`ecommerce`) e metadados do Airflow.
 - **Streamlit**: Framework Python para o dashboard analítico.
 - **Docker Compose**: Containerização de toda a infraestrutura para facilitar execução local.
 
@@ -31,15 +31,19 @@ graph LR
     style E fill:#fef08a,stroke:#a16207,stroke-width:2px
     style F fill:#bbf7d0,stroke:#15803d,stroke-width:2px
 
-    A[Origem: CSV] -->|Airflow DAG 01| B[(Landing Zone)]
+    A[(Origem: PostgreSQL)] -->|Airflow DAG 01| B[(Landing Zone)]
     B -->|PySpark / Delta<br>DAG 02| C[(Camada Bronze)]
     C -->|Limpeza<br>DAG 03| D[(Camada Silver)]
     D -->|Marts Analíticos<br>DAG 04| E[(Camada Gold)]
     E -->|Parquet| F[Dashboard Streamlit]
 </div>
 
+### Origem (Banco Relacional)
+- Banco PostgreSQL (`ecommerce`) com 10 tabelas, populado pelo gerador Faker.
+- Representa o sistema transacional de origem lido pela camada Landing.
+
 ### Landing Zone
-- Dados brutos, no formato original.
+- Dados brutos, no formato original (CSV extraído do banco SQL de origem).
 - Arquivos CSV enviados para o bucket `s3://datalake/landing/ecommerce`.
 
 ### Camada Bronze

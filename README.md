@@ -28,7 +28,8 @@ Os slides e a explicação técnica detalhada da arquitetura deste projeto podem
 
 O pipeline processa dados sinteticos de e-commerce nas seguintes camadas:
 
-- Landing: CSVs enviados para `s3://datalake/landing/ecommerce`
+- Origem: banco relacional PostgreSQL (`ecommerce`) populado via Faker
+- Landing: CSVs extraidos do Postgres para `s3://datalake/landing/ecommerce`
 - Bronze: dados convertidos para Delta em `s3://datalake/bronze/ecommerce`
 - Silver: dados limpos e deduplicados em `s3://datalake/silver/ecommerce`
 - Gold: marts analiticos em `s3://datalake/gold/ecommerce`
@@ -55,23 +56,7 @@ DB_USER=airflow
 DB_PASSWORD=***
 ```
 
-### 2. Gerar os dados de origem
-
-Instale as dependencias locais do gerador de dados:
-
-```bash
-pip install -r requirements.txt
-```
-
-Na raiz do projeto, execute:
-
-```bash
-python scripts/gerar_dados_v2.py
-```
-
-Esse comando cria os CSVs em `dados_origem/`.
-
-### 3. Subir o ambiente
+### 2. Subir o ambiente
 
 Entre na pasta `docker` e suba os servicos:
 
@@ -85,6 +70,20 @@ Servicos principais:
 - Airflow: `http://localhost:8080`
 - MinIO Console: `http://localhost:9001`
 - Dashboard Streamlit: `http://localhost:8501`
+- Postgres de origem: `localhost:5433` (banco `ecommerce`)
+
+### 3. Gerar e carregar os dados de origem
+
+Com o ambiente no ar, instale as dependencias locais do gerador e popule o
+banco de origem:
+
+```bash
+pip install -r requirements.txt
+python scripts/gerar_dados_v2.py
+```
+
+Esse comando gera a massa com Faker e carrega as 10 tabelas no Postgres de
+origem (`ecommerce`), que sera lido pela camada Landing.
 
 Usuario do Airflow:
 

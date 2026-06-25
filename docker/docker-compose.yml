@@ -28,6 +28,22 @@ services:
       interval: 5s
       retries: 5
 
+  postgres-origem:
+    image: postgres:15
+    container_name: postgres-origem
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ecommerce
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_origem_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "ecommerce"]
+      interval: 5s
+      retries: 5
+
   airflow-init:
     build: .
     container_name: airflow-init
@@ -53,10 +69,11 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__WEBSERVER__SECRET_KEY: "chave_secreta_projeto_ed"
       _PIP_ADDITIONAL_REQUIREMENTS: "pyspark==3.5.1 delta-spark==3.1.0 boto3"
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ../src/dags:/opt/airflow/dags
       - ../src/pipeline:/opt/airflow/pipeline
-      - ../dados_origem:/opt/airflow/dados_origem
     ports:
       - "8080:8080"
     command: webserver
@@ -74,10 +91,11 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__WEBSERVER__SECRET_KEY: "chave_secreta_projeto_ed"
       _PIP_ADDITIONAL_REQUIREMENTS: "pyspark==3.5.1 delta-spark==3.1.0 boto3"
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ../src/dags:/opt/airflow/dags
       - ../src/pipeline:/opt/airflow/pipeline
-      - ../dados_origem:/opt/airflow/dados_origem
     command: scheduler
     restart: always
 
@@ -99,3 +117,4 @@ services:
 volumes:
   minio_data:
   postgres_data:
+  postgres_origem_data:

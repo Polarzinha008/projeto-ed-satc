@@ -5,8 +5,17 @@ from datetime import datetime, timedelta
 from tqdm import tqdm
 import os
 
+from sqlalchemy import create_engine
+
 # Inicializa o Faker configurado para o Brasil
 fake = Faker(['pt_BR'])
+
+# Conexão com o banco de origem (postgres)
+PG_USER = os.getenv("DB_USER", "airflow")
+PG_PASSWORD = os.getenv("DB_PASSWORD", "airflow")
+PG_HOST = os.getenv("PG_ORIGEM_HOST", "localhost")
+PG_PORT = os.getenv("PG_ORIGEM_PORT", "5433")
+PG_DB = os.getenv("PG_ORIGEM_DB", "ecommerce")
 
 # Definição dos volumes exatos para somar 100.000 registros
 VOLUMES = {
@@ -207,20 +216,31 @@ for idx in tqdm(
     })
 df_itens_pedido = pd.DataFrame(itens_pedido)
 
-# --- SALVANDO NA PASTA DE ORIGEM ---
-os.makedirs("dados_origem", exist_ok=True)
-df_clientes.to_csv("dados_origem/clientes.csv", index=False)
-df_enderecos.to_csv("dados_origem/enderecos.csv", index=False)
-df_categorias.to_csv("dados_origem/categorias.csv", index=False)
-df_fornecedores.to_csv("dados_origem/fornecedores.csv", index=False)
-df_produtos.to_csv("dados_origem/produtos.csv", index=False)
-df_cupons.to_csv("dados_origem/cupons.csv", index=False)
-df_pedidos.to_csv("dados_origem/pedidos.csv", index=False)
-df_itens_pedido.to_csv("dados_origem/itens_pedido.csv", index=False)
-df_pagamentos.to_csv("dados_origem/pagamentos.csv", index=False)
-df_avaliacoes.to_csv("dados_origem/avaliacoes.csv", index=False)
+# --- CARGA NO BANCO DE ORIGEM ---
+# O Faker gera a massa e popula o ambiente relacional (Postgres), que é a
+# origem lida pela camada Landing.
+tabelas = {
+    "clientes": df_clientes,
+    "enderecos": df_enderecos,
+    "categorias": df_categorias,
+    "fornecedores": df_fornecedores,
+    "produtos": df_produtos,
+    "cupons": df_cupons,
+    "pedidos": df_pedidos,
+    "itens_pedido": df_itens_pedido,
+    "pagamentos": df_pagamentos,
+    "avaliacoes": df_avaliacoes,
+}
+
+engine = create_engine(
+    f"postgresql+psycopg2://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DB}"
+)
+
+for nome, df in tabelas.items():
+    df.to_sql(nome, engine, if_exists="replace", index=False)
+    print(f"Carregada no banco: {nome} ({len(df)} linhas)")
 
 print(
-    f"\n Sucesso! {total_geral} registros criados e distribuídos "
-    "nas 10 tabelas em 'dados_origem/'."
+    f"\n Sucesso! {total_geral} registros criados e carregados "
+    f"nas 10 tabelas do banco de origem '{PG_DB}'."
 )
