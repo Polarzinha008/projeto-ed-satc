@@ -64,7 +64,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4-executar-as-dags-no-airflow">4. Executar as DAGs no Airflow</a>
+    <li class="toctree-l2"><a class="reference internal" href="#4-executar-a-dag-no-airflow">4. Executar a DAG no Airflow</a>
     </li>
     </ul>
                 </li>
@@ -155,16 +155,18 @@ docker compose --env-file ../.env up --build -d
 </tr>
 </tbody>
 </table>
-<h2 id="4-executar-as-dags-no-airflow">4. Executar as DAGs no Airflow</h2>
-<p>Acesse a interface do Airflow e ative as DAGs em sequência, esperando a anterior concluir antes de iniciar a próxima:</p>
+<h2 id="4-executar-a-dag-no-airflow">4. Executar a DAG no Airflow</h2>
+<p>Acesse a interface do Airflow e execute a DAG <code>dag_pipeline_ecommerce</code>. Ela
+orquestra todas as camadas em uma única DAG, através de tasks encadeadas que
+rodam em ordem automaticamente:</p>
 <ol>
-<li><code>dag_01_landing</code> - Move dados gerados para o storage (Landing Zone).</li>
-<li><code>dag_02_bronze</code> - Ingestão para o Delta Lake (Camada Bronze).</li>
-<li><code>dag_03_silver</code> - Limpeza e deduplicação (Camada Silver).</li>
-<li><code>dag_04_gold</code> - Criação dos Marts analíticos e exportação para o Dashboard.</li>
+<li><code>ingestao_landing</code> - Move dados gerados para o storage (Landing Zone).</li>
+<li><code>processamento_bronze</code> - Ingestão para o Delta Lake (Camada Bronze).</li>
+<li><code>processamento_silver</code> - Limpeza e deduplicação (Camada Silver).</li>
+<li><code>processamento_gold</code> - Criação dos Marts analíticos e exportação para o Dashboard.</li>
 </ol>
 <blockquote>
-<p><strong>Importante:</strong> A <code>dag_04_gold</code> não só cria os marts em Delta, mas também publica as cópias finais em formato Parquet para o Streamlit consumir. Após o término com sucesso da camada Gold, o dashboard estará com os dados prontos.</p>
+<p><strong>Importante:</strong> A task <code>processamento_gold</code> não só cria os marts em Delta, mas também publica as cópias finais em formato Parquet para o Streamlit consumir. Após o término com sucesso da camada Gold, o dashboard estará com os dados prontos.</p>
 </blockquote>
               
             </div>
